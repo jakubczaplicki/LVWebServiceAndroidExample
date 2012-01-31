@@ -11,6 +11,8 @@ import org.w3c.dom.Document;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -24,8 +26,8 @@ public class SinglePoint extends Activity implements OnClickListener
    private Chart mChart;
    private EditText mURLText;
    private updaterThread mThread;
+   private EditText mValue;
 
-   @Override
    public void onCreate(Bundle savedInstanceState)
    {
       super.onCreate(savedInstanceState);
@@ -34,6 +36,7 @@ public class SinglePoint extends Activity implements OnClickListener
       mChart = (Chart) findViewById(R.id.DataChart);
       mURLText = (EditText) findViewById(R.id.URLEditText);
       Button updateButton = (Button) findViewById(R.id.UpdateButton);
+      mValue =   (EditText) findViewById(R.id.Value);
       mThread = new updaterThread();
       
       if(savedInstanceState != null)
@@ -46,7 +49,6 @@ public class SinglePoint extends Activity implements OnClickListener
       updateButton.setOnClickListener(this);
    }
 
-   @Override
    protected void onSaveInstanceState(Bundle outState)
    {
       //Save the graph data and URL text when the activity is destroyed
@@ -55,7 +57,6 @@ public class SinglePoint extends Activity implements OnClickListener
       mChart.saveState(outState);
    }
 
-   @Override
    public void onClick(View v)
    {
       if (mThread.isAlive())
@@ -88,11 +89,27 @@ public class SinglePoint extends Activity implements OnClickListener
       }
    }
 
+   String value = "";
+   
+   // Instantiating the Handler associated with the main thread.
+   private Handler messageHandler = new Handler() {
+
+       @Override
+       public void handleMessage(Message msg) {  
+           switch(msg.what) {
+	        //handle update
+	        case 1:
+	               mValue.setText(value);
+	               mValue.invalidate();
+	        break;
+           }
+       }   
+   };
+
    class updaterThread extends Thread
    {
       public volatile Boolean mStop = false;
 
-      @Override
       public void run()
       {
          // This is all the same as before, except we will parse the double and
@@ -115,11 +132,14 @@ public class SinglePoint extends Activity implements OnClickListener
                // Parse XML from the web service into a DOM tree
                Document doc = docbuilder.parse(connection.getInputStream());
                // Now, pull out the value attribute of the first channel element
-               String value = doc.getElementsByTagName("channel")
+               value = doc.getElementsByTagName("channel")
                      .item(0)
                      .getAttributes()
                      .getNamedItem("value")
                      .getNodeValue();
+               
+               messageHandler.sendMessage(Message.obtain(messageHandler, 1));
+               
                // Create an array of data to add to the chart. There is only one
                // channel of data right now, so just add one point.
                ArrayList<Double> data = new ArrayList<Double>();
@@ -147,3 +167,4 @@ public class SinglePoint extends Activity implements OnClickListener
       }
    }
 }
+

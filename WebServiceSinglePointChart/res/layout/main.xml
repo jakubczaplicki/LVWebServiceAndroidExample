@@ -5,6 +5,15 @@
     android:layout_height="fill_parent"
     >
 
-<TextView android:id="@+id/TextView01" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Service URL"></TextView><EditText android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/URLEditText" android:hint="URL"></EditText><Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/UpdateButton" android:text="Start"></Button>
+<TextView android:id="@+id/TextView01" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Service URL"></TextView>
+
+<EditText android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/URLEditText" android:hint="URL"
+    android:text="http://192.168.1.8:8080/MobileAPI/SampleTemp" ></EditText>
+
+<Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/UpdateButton" android:text="Start"></Button>
+
+<EditText android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/Value" android:hint="0.00"></EditText>
+
 <com.nati.singlepointchart.Chart android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/DataChart"></com.nati.singlepointchart.Chart>
 </LinearLayout>
+
